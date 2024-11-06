@@ -1,2 +1,2 @@
-# unbinned_kstmumu
+# Unbinned K*mumu
 My super secret thing
