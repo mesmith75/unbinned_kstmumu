@@ -17,6 +17,39 @@ def calculateAllMoments(inframe):
     inframe['moment_S9'] = 3.125*(1. - inframe['ctk']**2)*(1. - inframe['ctl']**2)*np.sin(2.*inframe['phi'])
     return inframe
 
+def calculateAllVariances(inframe, indices, vals, n_neighbours):
+    _i = 0
+    for _ind in indices:
+        rs = inframe.iloc[_ind]
+    
+        angles2 = 0.8 - 0.4*vals["FL"][_i] - (1. - rs['ctk']**2)
+        vals["err_FL"].append(2.5*np.sqrt( 1./(n_neighbours*(n_neighbours-1)) * np.sum(angles2**2)))
+    
+        angles3 = 0.32*vals["S3"][_i] - (1. - rs['ctk']**2)*(1. - rs['ctl']**2)*np.cos(2.*rs['phi'])
+        vals["err_S3"].append(3.125*np.sqrt( 1./(n_neighbours*(n_neighbours-1)) * np.sum(angles3**2)))
+    
+        angles4 = 0.32*vals["S4"][_i] - 2*rs['ctl'] * np.sqrt(1. - rs['ctl']*rs['ctl']) * 2 * rs['ctk'] * np.sqrt(1. -rs['ctk']*rs['ctk']) * np.cos(rs['phi'])
+        vals["err_S4"].append(3.125*np.sqrt( 1./(n_neighbours*(n_neighbours-1)) * np.sum(angles4**2)))
+    
+        angles5 = 0.4*vals["S5"][_i] - np.sqrt(1. - rs['ctl']*rs['ctl']) * 2 * rs['ctk'] * np.sqrt(1. - rs['ctk']*rs['ctk']) * np.cos(rs['phi'])
+        vals["err_S5"].append(2.5*np.sqrt( 1./(n_neighbours*(n_neighbours-1)) * np.sum(angles5**2)))
+    
+        angles6 = 0.4*(4./3.)*vals["AFB"][_i] - (1. - rs['ctk']**2)*rs['ctl']
+        vals["err_AFB"].append(0.75*2.5*np.sqrt( 1./(n_neighbours*(n_neighbours-1)) * np.sum(angles6**2)))
+    
+        angles7 = 0.4*vals["S7"][_i] - 2 * rs['ctk'] * np.sqrt(1. - rs['ctk']*rs['ctk'])*np.sqrt(1. - rs['ctl']*rs['ctl'])*np.sin(rs['phi'])
+        vals["err_S7"].append(2.5*np.sqrt( 1./(n_neighbours*(n_neighbours-1)) * np.sum(angles7**2)))
+    
+        angles8 = 0.32*vals["S8"][_i] - 2 * rs['ctk'] * np.sqrt(1. - rs['ctk']*rs['ctk'])*2.*rs['ctl']*np.sqrt(1. - rs['ctl']*rs['ctl'])*np.sin(rs['phi'])
+        vals["err_S8"].append(3.125*np.sqrt( 1./(n_neighbours*(n_neighbours-1)) * np.sum(angles8**2)))
+    
+        angles9 = 0.32*vals["S9"][_i] - (1. - rs['ctk']**2)*(1. - rs['ctl']**2)*np.sin(2.*rs['phi'])
+        vals["err_S9"].append(3.125*np.sqrt( 1./(n_neighbours*(n_neighbours-1)) * np.sum(angles9**2)))
+        
+        _i += 1
+
+    return vals
+
 def calculateOptimisedObservables(inframe):
     """
     This is a function that calculates the optimised observables from the regular ones.
